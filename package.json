@@ -1,0 +1,27 @@
+{
+  "name": "graph-grom",
+  "version": "1.0.0",
+  "description": "graph your groms!",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dvisco/graph-grom.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/dvisco/graph-grom/issues"
+  },
+  "homepage": "https://github.com/dvisco/graph-grom#readme",
+  "dependencies": {
+    "bookshelf": "^0.10.3",
+    "express": "^4.14.1",
+    "express-graphql": "^0.6.3",
+    "graphql": "^0.9.1",
+    "knex": "^0.12.7",
+    "pg": "^6.1.2"
+  }
+}
