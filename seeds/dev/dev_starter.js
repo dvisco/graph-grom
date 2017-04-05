@@ -1,48 +1,55 @@
 
-// var startingUsers = [
-//     {email: 'dom@suitable.co', password: 'BLANKPASS'},
-//     {email: 'dom1@suitable.co', password: 'BLANKPASS'},
-//     {email: 'dom2@suitable.co', password: 'BLANKPASS'}
-// ];
+var startingUsers = [
+    {email: 'dom@suitable.co', password: 'BLANKPASS'},
+    {email: 'dom1@suitable.co', password: 'BLANKPASS'},
+    {email: 'dom2@suitable.co', password: 'BLANKPASS'}
+];
+
+function createUser(knex, user) {
+  return knex.table('users')
+    .returning('id')
+    .insert(
+    {
+      email: user.email,
+      password: user.password
+    }
+  )
+    .then(function(userIds){
+      return knex('profiles')
+        .insert(
+        {
+          first_name: "firstName",
+          last_name: "lastname",
+          user_id: userIds[0]
+        }
+    ).then(function(){
+        return knex('roles')
+          .insert(
+          {
+            authority: "ROLE_USER",
+            user_id: userIds[0]
+        });
+    });
+
+    });
+}
 
 exports.seed = function(knex, Promise) {
-
-  // return Promise.all([
-  //   knex('swipes').del(),
-  //   knex('profiles').del(),
-  //   knex('roles').del(),
-  //   knex('users').del()])
-  //   .then(function(){
-  //       // startingUsers.map(({email, password}, i) => {
-  //       //     console.log(email);
-  //       //     knex('users').insert({
-  //       //         email: email,
-  //       //         password: password
-  //       //     }).returning('id').then(([id])=> {
-  //       //         console.log(id);
-  //       //     });
-  //       // });
-  //       var ids = knex('users').insert([
-  //           {email: 'dom@suitable.co', password: 'BLANKPASS'},
-  //           {email: 'dom1@suitable.co', password: 'BLANKPASS'},
-  //           {email: 'dom2@suitable.co', password: 'BLANKPASS'}
-  //       ])
-  //       .then(function(data){
-  //           console.log(data);
-  //           console.log(ids);
-  //       })
-  //   });
-
-  var ids = knex('users').insert([
-      {email: 'dom@suitable.co', password: 'BLANKPASS'},
-      {email: 'dom1@suitable.co', password: 'BLANKPASS'},
-      {email: 'dom2@suitable.co', password: 'BLANKPASS'}
-  ])
-  .then(function(data){
-      console.log(data);
-      console.log(ids);
-  })
-  
-  //
-  // ]);
+    return knex('swipes').del()
+    .then(() => {
+      return knex('profiles').del()
+      .then(() => {
+          return knex('roles').del()
+          .then(() => {
+              return knex('users').del()
+              .then(() => {
+                  var userPromises = [];
+                  startingUsers.forEach(function(user){
+                      userPromises.push(createUser(knex, user));
+                  });
+                  return Promise.all(userPromises);
+              });
+          });
+      });
+    });
 };
